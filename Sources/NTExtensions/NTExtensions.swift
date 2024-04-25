@@ -7,7 +7,11 @@
 
 import Foundation
 import BSON
+import NIOCore
+import NIOFoundationCompat
 import NIOConcurrencyHelpers
+
+
 
 extension NIOLock: Sendable {
     @inlinable
@@ -31,8 +35,11 @@ extension NIOLock: Sendable {
 
 
 extension BSONDecoder {
+    enum Errors: Error, Sendable {
+        case nilData
+    }
     public func decodeString<T: Codable>(_ type: T.Type, from string: String) throws -> T {
-        guard let data = Data(base64Encoded: string) else { throw NeedleTailError.nilData }
+        guard let data = Data(base64Encoded: string) else { throw Errors.nilData }
         let buffer = ByteBuffer(data: data)
         return try decode(type, from: Document(buffer: buffer))
     }

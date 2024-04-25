@@ -43,6 +43,8 @@ let package = Package(
         .target(
             name: "NTExtensions",
             dependencies: [
+                .product(name: "NIOCore", package: "swift-nio"),
+                .product(name: "NIOFoundationCompat", package: "swift-nio"),
                 .product(name: "NIOConcurrencyHelpers", package: "swift-nio"),
                 .product(name: "BSON", package: "BSON"),
                 .product(name: "NeedleTailLogger", package: "needletail-logger")

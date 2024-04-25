@@ -13,12 +13,18 @@ let package = Package(
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "NeedleTailAlgorithms",
-            targets: ["NeedleTailAsyncSequence"]),
+            targets: [
+                "NeedleTailAsyncSequence",
+                "NeedleTailQueue",
+                "NTExtensions"
+            ]),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-algorithms.git", .upToNextMajor(from: "1.2.0")),
         .package(url: "https://github.com/apple/swift-async-algorithms.git", .upToNextMajor(from: "1.0.0")),
         .package(url: "https://github.com/apple/swift-atomics.git", .upToNextMajor(from: "1.2.0")),
+        .package(url: "https://github.com/apple/swift-nio.git", .upToNextMajor(from: "2.65.0")),
+        .package(url: "https://github.com/orlandos-nl/BSON.git", from: "8.1.0"),
         .package(url: "git@github.com:needle-tail/needletail-logger.git", branch: "main")
     ],
     targets: [
@@ -30,6 +36,15 @@ let package = Package(
                 .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
                 .product(name: "Algorithms", package: "swift-algorithms"),
                 .product(name: "Atomics", package: "swift-atomics"),
+                .product(name: "NeedleTailLogger", package: "needletail-logger")
+            ]
+        ),
+        .target(name: "NeedleTailQueue"),
+        .target(
+            name: "NTExtensions",
+            dependencies: [
+                .product(name: "NIOConcurrencyHelpers", package: "swift-nio"),
+                .product(name: "BSON", package: "BSON"),
                 .product(name: "NeedleTailLogger", package: "needletail-logger")
             ]
         ),

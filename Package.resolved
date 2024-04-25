@@ -1,6 +1,15 @@
 {
-  "originHash" : "eb2b3b066b3da1fe8d7196136f8318d0595a927e41f87778b2026bae742d95c0",
+  "originHash" : "a2ad1f9db99e53baf739cd1cea6a5976035b2e0b8474c3c7511e9bcb411ec8c9",
   "pins" : [
+    {
+      "identity" : "bson",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/orlandos-nl/BSON.git",
+      "state" : {
+        "revision" : "57da7f36cabca92166f061ea7a9539a245ee02d7",
+        "version" : "8.1.0"
+      }
+    },
     {
       "identity" : "needletail-logger",
       "kind" : "remoteSourceControl",
@@ -56,12 +65,30 @@
       }
     },
     {
+      "identity" : "swift-nio",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-nio.git",
+      "state" : {
+        "revision" : "359c461e5561d22c6334828806cc25d759ca7aa6",
+        "version" : "2.65.0"
+      }
+    },
+    {
       "identity" : "swift-numerics",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-numerics.git",
       "state" : {
         "revision" : "0a5bc04095a675662cf24757cc0640aa2204253b",
         "version" : "1.0.2"
+      }
+    },
+    {
+      "identity" : "swift-system",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-system.git",
+      "state" : {
+        "revision" : "025bcb1165deab2e20d4eaba79967ce73013f496",
+        "version" : "1.2.1"
       }
     }
   ],

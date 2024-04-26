@@ -1,5 +1,5 @@
 {
-  "originHash" : "64e36e564f4d5c092e217fda65053a35575b66959997d2bed6487155a22110d3",
+  "originHash" : "b4285f022632b531d960c059852b12a0c63e231f38ae6856d9a76c5affe023fd",
   "pins" : [
     {
       "identity" : "bson",
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "git@github.com:needle-tail/needletail-logger.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "34469ea7122c255cfc412466d43d6e13b4c6a116"
+        "revision" : "34469ea7122c255cfc412466d43d6e13b4c6a116",
+        "version" : "1.0.0"
       }
     },
     {

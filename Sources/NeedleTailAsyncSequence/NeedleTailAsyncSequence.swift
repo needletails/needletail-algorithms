@@ -9,7 +9,7 @@ import DequeModule
 import Atomics
 import NeedleTailLogger
 
-public struct NeedleTailAsyncSequence<ConsumerTypeValue>: AsyncSequence {
+public struct NeedleTailAsyncSequence<ConsumerTypeValue: Sendable>: AsyncSequence {
     
     public typealias Element = NTASequenceStateMachine.NTASequenceResult<ConsumerTypeValue>
     
@@ -54,14 +54,14 @@ extension NeedleTailAsyncSequence {
         }
     }
 }
-public struct TaskJob<T> {
+public struct TaskJob<T: Sendable> {
     public var item: T
     public var priority: Priority
 }
 public enum Priority: Int, Sendable {
     case urgent, standard, background, utility
 }
-public actor NeedleTailAsyncConsumer<T> {
+public actor NeedleTailAsyncConsumer<T: Sendable> {
     private let logger = NeedleTailLogger(.init(label: "[NeedleTailAsyncConsumer]"))
     public var deque = Deque<TaskJob<T>>()
     public var stateMachine = NTASequenceStateMachine()
@@ -136,7 +136,7 @@ public actor NeedleTailAsyncConsumer<T> {
     }
 }
 
-public final class NTASequenceStateMachine: Sendable {
+public final class NTASequenceStateMachine: @unchecked Sendable {
     
     public init() {}
     

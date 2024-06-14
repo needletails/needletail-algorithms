@@ -27,7 +27,7 @@ public struct NeedleTailAsyncSequence<ConsumerTypeValue: Sendable>: AsyncSequenc
 }
 
 extension NeedleTailAsyncSequence {
-    public struct Iterator<T>: AsyncIteratorProtocol {
+    public struct Iterator<T: Sendable>: AsyncIteratorProtocol {
         
         
         public typealias Element = NTASequenceStateMachine.NTASequenceResult<T>
@@ -54,13 +54,15 @@ extension NeedleTailAsyncSequence {
         }
     }
 }
-public struct TaskJob<T: Sendable> {
+public struct TaskJob<T: Sendable>: Sendable {
     public var item: T
     public var priority: Priority
 }
 public enum Priority: Int, Sendable {
     case urgent, standard, background, utility
 }
+extension Deque: Sendable {}
+
 public actor NeedleTailAsyncConsumer<T: Sendable> {
     private let logger = NeedleTailLogger(.init(label: "[NeedleTailAsyncConsumer]"))
     public var deque = Deque<TaskJob<T>>()

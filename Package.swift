@@ -37,9 +37,6 @@ let package = Package(
                 .product(name: "Algorithms", package: "swift-algorithms"),
                 .product(name: "Atomics", package: "swift-atomics"),
                 .product(name: "NeedleTailLogger", package: "needletail-logger")
-            ],
-            swiftSettings: [
-                .unsafeFlags(["-warn-concurrency"], .when(configuration: .debug))
             ]
         ),
         .target(name: "NeedleTailQueue"),
@@ -51,9 +48,6 @@ let package = Package(
                 .product(name: "NIOConcurrencyHelpers", package: "swift-nio"),
                 .product(name: "BSON", package: "BSON"),
                 .product(name: "NeedleTailLogger", package: "needletail-logger")
-            ],
-            swiftSettings: [
-                .unsafeFlags(["-warn-concurrency"], .when(configuration: .debug))
             ]
         ),
         .testTarget(

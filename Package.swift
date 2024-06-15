@@ -16,7 +16,8 @@ let package = Package(
             targets: [
                 "NeedleTailAsyncSequence",
                 "NeedleTailQueue",
-                "NTExtensions"
+                "NTExtensions",
+                "NTKLoop"
             ]),
     ],
     dependencies: [
@@ -40,6 +41,7 @@ let package = Package(
             ]
         ),
         .target(name: "NeedleTailQueue"),
+        .target(name: "NTKLoop"),
         .target(
             name: "NTExtensions",
             dependencies: [

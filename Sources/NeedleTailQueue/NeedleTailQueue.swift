@@ -6,7 +6,7 @@
 //
 
 public protocol NeedleTailQueue: Sendable {
-    associatedtype Element
+    associatedtype Element: Sendable
     func enqueue(_ element: Element?, elements: [Element]?) async
     func dequeue() async -> Element?
     func popFirst() async -> Element?
@@ -31,7 +31,7 @@ public actor NeedleTailStack<T: Sendable>: NeedleTailQueue, Sendable  {
         return !dequeueStack.isEmpty ? dequeueStack.last : enqueueStack.first
     }
 
-    public func enqueue<T: Sendable>(_ element: T? = nil, elements: [T]? = nil) async {
+    public func enqueue(_ element: T? = nil, elements: [T]? = nil) async {
         consumptionState = .enquing
         //If stack is empty we want to set the array to the enqueue stack
         if enqueueStack.isEmpty {

@@ -22,7 +22,8 @@ public actor NeedleTailStack<T: Sendable>: NeedleTailQueue, Sendable  {
     
     public var enqueueStack: [T] = []
     public var dequeueStack: [T] = []
-
+    public var consumptionState = ConsumptionState.empty
+    
     public func isEmpty() async -> Bool {
         return dequeueStack.isEmpty && enqueueStack.isEmpty
     }
@@ -84,7 +85,6 @@ public actor NeedleTailStack<T: Sendable>: NeedleTailQueue, Sendable  {
 public enum ConsumptionState: Sendable {
     case consuming, enquing, dequing, draining, ready, empty
 }
-public var consumptionState = ConsumptionState.empty
 
 public protocol SyncQueue: Sendable {
     associatedtype Element
@@ -103,7 +103,8 @@ public struct SyncStack<T: Sendable>: SyncQueue, Sendable  {
     
     public var enqueueStack: [T] = []
     public var dequeueStack: [T] = []
-
+    public var consumptionState = ConsumptionState.empty
+    
     public mutating func isEmpty() -> Bool {
         return dequeueStack.isEmpty && enqueueStack.isEmpty
     }

@@ -22,8 +22,6 @@ public struct NeedleTailAsyncSequence<ConsumerTypeValue: Sendable>: AsyncSequenc
     public func makeAsyncIterator() -> Iterator<ConsumerTypeValue> {
         return NeedleTailAsyncSequence.Iterator(consumer: consumer)
     }
-    
-    
 }
 
 extension NeedleTailAsyncSequence {
@@ -57,7 +55,13 @@ extension NeedleTailAsyncSequence {
 public struct TaskJob<T: Sendable>: Sendable {
     public var item: T
     public var priority: Priority
+    
+    public init(item: T, priority: Priority) {
+        self.item = item
+        self.priority = priority
+    }
 }
+
 public enum Priority: Int, Sendable {
     case urgent, standard, background, utility
 }

@@ -16,7 +16,6 @@ let package = Package(
             targets: [
                 "NeedleTailAsyncSequence",
                 "NeedleTailQueue",
-                "NTExtensions",
                 "NTKLoop"
             ]),
     ],
@@ -24,8 +23,6 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-algorithms.git", .upToNextMajor(from: "1.2.0")),
         .package(url: "https://github.com/apple/swift-async-algorithms.git", .upToNextMajor(from: "1.0.0")),
         .package(url: "https://github.com/apple/swift-atomics.git", .upToNextMajor(from: "1.2.0")),
-        .package(url: "https://github.com/apple/swift-nio.git", .upToNextMajor(from: "2.65.0")),
-        .package(url: "https://github.com/orlandos-nl/BSON.git", from: "8.1.0"),
         .package(url: "git@github.com:needle-tail/needletail-logger.git", .upToNextMajor(from: "1.0.3")),
     ],
     targets: [
@@ -42,16 +39,6 @@ let package = Package(
         ),
         .target(name: "NeedleTailQueue"),
         .target(name: "NTKLoop"),
-        .target(
-            name: "NTExtensions",
-            dependencies: [
-                .product(name: "NIOCore", package: "swift-nio"),
-                .product(name: "NIOFoundationCompat", package: "swift-nio"),
-                .product(name: "NIOConcurrencyHelpers", package: "swift-nio"),
-                .product(name: "BSON", package: "BSON"),
-                .product(name: "NeedleTailLogger", package: "needletail-logger")
-            ]
-        ),
         .testTarget(
             name: "NeedleTailAsyncSequenceTests",
             dependencies: ["NeedleTailAsyncSequence"]),

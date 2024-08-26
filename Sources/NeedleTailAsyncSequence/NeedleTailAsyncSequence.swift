@@ -20,13 +20,12 @@ public struct NeedleTailAsyncSequence<ConsumerTypeValue: Sendable>: AsyncSequenc
     }
     
     public func makeAsyncIterator() -> Iterator<ConsumerTypeValue> {
-        return NeedleTailAsyncSequence.Iterator(consumer: consumer)
+        return Iterator(consumer: consumer)
     }
 }
 
 extension NeedleTailAsyncSequence {
     public struct Iterator<T: Sendable>: AsyncIteratorProtocol {
-        
         
         public typealias Element = NTASequenceStateMachine.NTASequenceResult<T>
         
@@ -52,6 +51,7 @@ extension NeedleTailAsyncSequence {
         }
     }
 }
+
 public struct TaskJob<T: Sendable>: Sendable {
     public var item: T
     public var priority: Priority
@@ -65,6 +65,7 @@ public struct TaskJob<T: Sendable>: Sendable {
 public enum Priority: Int, Sendable {
     case urgent, standard, background, utility
 }
+
 extension Deque: Sendable {}
 
 public actor NeedleTailAsyncConsumer<T: Sendable> {
@@ -78,49 +79,25 @@ public actor NeedleTailAsyncConsumer<T: Sendable> {
     
     public func feedConsumer(_ item: T, priority: Priority = .standard) async {
         logger.log(level: .trace, message: "Fed task with priority: \(priority)")
+        let taskJob = TaskJob(item: item, priority: priority)
+        
         switch priority {
         case .urgent:
-            deque.prepend(TaskJob(
-                item: item,
-                priority: priority
-            )
-            )
+            deque.prepend(taskJob)
         case .standard:
-            if let utilityIndex = deque.firstIndex(where: { $0.priority == .utility }) {
-                deque.insert(
-                    TaskJob(
-                        item: item,
-                        priority: priority
-                    )
-                    , at: utilityIndex)
-            } else {
-                deque.append(TaskJob(
-                    item: item,
-                    priority: priority
-                )
-                )
-            }
+            insertTaskJob(taskJob, beforePriority: .utility)
         case .utility:
-            if let backgroundIndex = deque.firstIndex(where: { $0.priority == .background }) {
-                deque.insert(
-                    TaskJob(
-                        item: item,
-                        priority: priority
-                    )
-                    , at: backgroundIndex)
-            } else {
-                deque.append(TaskJob(
-                    item: item,
-                    priority: priority
-                )
-                )
-            }
+            insertTaskJob(taskJob, beforePriority: .background)
         case .background:
-            deque.append(TaskJob(
-                item: item,
-                priority: priority
-            )
-            )
+            deque.append(taskJob)
+        }
+    }
+    
+    private func insertTaskJob(_ taskJob: TaskJob<T>, beforePriority: Priority) {
+        if let index = deque.firstIndex(where: { $0.priority == beforePriority }) {
+            deque.insert(taskJob, at: index)
+        } else {
+            deque.append(taskJob)
         }
     }
     
@@ -150,15 +127,11 @@ public final class NTASequenceStateMachine: @unchecked Sendable {
         case consumed, waiting
         
         public var description: String {
-            switch self.rawValue {
-            case 0:
-                //Empty consumer
+            switch self {
+            case .consumed:
                 return "consumed"
-            case 1:
-                //Non Empty consumer
+            case .waiting:
                 return "ready"
-            default:
-                return ""
             }
         }
     }
@@ -186,3 +159,10 @@ public final class NTASequenceStateMachine: @unchecked Sendable {
         state = 0
     }
 }
+
+// MARK: - Testing Considerations
+// 1. Test `NeedleTailAsyncConsumer` to ensure tasks are fed and retrieved in the correct order based on priority.
+// 2. Test cancellation behavior in `next()` to ensure that it properly cancels ongoing operations.
+// 3. Test the `feedConsumer` method to ensure that tasks are inserted correctly based on their priority.
+// 4. Test the `NTASequenceStateMachine` to ensure that state transitions occur as expected.
+

@@ -23,7 +23,8 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-algorithms.git", .upToNextMajor(from: "1.2.0")),
         .package(url: "https://github.com/apple/swift-async-algorithms.git", .upToNextMajor(from: "1.0.0")),
         .package(url: "https://github.com/apple/swift-atomics.git", .upToNextMajor(from: "1.2.0")),
-        .package(url: "git@github.com:needle-tail/needletail-logger.git", .upToNextMajor(from: "1.0.3")),
+        .package(url: "https://github.com/apple/swift-collections.git", .upToNextMajor(from: "1.1.3")),
+        .package(url: "git@github.com:needle-tail/needletail-logger.git", .upToNextMajor(from: "1.0.3"))
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -34,10 +35,11 @@ let package = Package(
                 .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
                 .product(name: "Algorithms", package: "swift-algorithms"),
                 .product(name: "Atomics", package: "swift-atomics"),
-                .product(name: "NeedleTailLogger", package: "needletail-logger")
+                .product(name: "NeedleTailLogger", package: "needletail-logger"),
+                .product(name: "Collections", package: "swift-collections")
             ]
         ),
-        .target(name: "NeedleTailQueue"),
+        .target(name: "NeedleTailQueue", dependencies: [.product(name: "Collections", package: "swift-collections")]),
         .target(name: "NTKLoop"),
         .testTarget(
             name: "NeedleTailAsyncSequenceTests",

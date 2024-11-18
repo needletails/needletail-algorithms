@@ -78,7 +78,7 @@ public actor NeedleTailAsyncConsumer<T: Sendable> {
     }
     
     public func feedConsumer(_ item: T, priority: Priority = .standard) async {
-        logger.log(level: .trace, message: "Fed task with priority: \(priority)")
+        await logger.log(level: .trace, message: "Fed task with priority: \(priority)")
         let taskJob = TaskJob(item: item, priority: priority)
         
         switch priority {

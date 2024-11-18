@@ -1,13 +1,13 @@
 {
-  "originHash" : "249ac44b8263e824791c92f6cb7e59841f3c0c30312dd8c44f6a296704173757",
+  "originHash" : "bbedd03c260155c9f6ab41cb4b08ea037f770587e1b5e853d09d7146459eca29",
   "pins" : [
     {
       "identity" : "needletail-logger",
       "kind" : "remoteSourceControl",
       "location" : "git@github.com:needle-tail/needletail-logger.git",
       "state" : {
-        "revision" : "92e8278ca16e96db2bcfd9cb1dc186980f2ea680",
-        "version" : "1.0.3"
+        "revision" : "efdf5c6700b23af6df51e3edefce9b5e38679305",
+        "version" : "2.0.1"
       }
     },
     {
@@ -42,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-collections.git",
       "state" : {
-        "revision" : "3d2dc41a01f9e49d84f0a3925fb858bed64f702d",
-        "version" : "1.1.2"
+        "revision" : "671108c96644956dddcd89dd59c203dcdb36cec7",
+        "version" : "1.1.4"
       }
     },
     {

@@ -24,7 +24,7 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-async-algorithms.git", .upToNextMajor(from: "1.0.0")),
         .package(url: "https://github.com/apple/swift-atomics.git", .upToNextMajor(from: "1.2.0")),
         .package(url: "https://github.com/apple/swift-collections.git", .upToNextMajor(from: "1.1.3")),
-        .package(url: "git@github.com:needletails/needletail-logger.git", .upToNextMajor(from: "3.0.0"))
+        .package(url: "https://github.com/needletails/needletail-logger.git", .upToNextMajor(from: "3.0.0"))
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.

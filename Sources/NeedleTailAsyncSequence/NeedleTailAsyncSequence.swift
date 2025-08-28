@@ -32,7 +32,7 @@ public actor NeedleTailAsyncConsumer<T: Sendable> {
     ///   - executor: An optional custom executor. If nil, a default executor is created.
     public init(
         deque: Deque<TaskJob<T>> = Deque<TaskJob<T>>(),
-        logger: NeedleTailLogger = NeedleTailLogger(.init(label: "[NeedleTailAsyncConsumer]")),
+        logger: NeedleTailLogger = NeedleTailLogger( "[NeedleTailAsyncConsumer]"),
         executor: (any AnyExecutor)? = nil // Optional executor
     ) {
         self.deque = deque

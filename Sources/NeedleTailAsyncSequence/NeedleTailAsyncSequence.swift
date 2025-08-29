@@ -7,7 +7,6 @@ import Foundation
 import DequeModule
 import Atomics
 import NeedleTailLogger
-import Logging
 
 /// A protocol that combines the requirements of TaskExecutor and SerialExecutor.
 public protocol AnyExecutor: TaskExecutor & SerialExecutor {}

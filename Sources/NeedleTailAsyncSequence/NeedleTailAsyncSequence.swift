@@ -252,10 +252,6 @@ public enum Priority: Int, Sendable, Codable {
     case urgent, standard, background, utility
 }
 
-/// Safe to conform when `Deque.Element` is `Sendable` (e.g. `TaskJob<T>` where `T: Sendable`).
-/// Deque is Sendable when its Element is Sendable (e.g. TaskJob<T> where T: Sendable).
-extension Deque: Sendable {}
-
 /// A protocol defining the requirements for a consumer.
 public protocol Consumer: Sendable {
     associatedtype T: Sendable

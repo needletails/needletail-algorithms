@@ -23,6 +23,9 @@ public actor NeedleTailAsyncConsumer<T: Sendable> {
     public var deque = Deque<TaskJob<T>>() // A deque to hold tasks.
     public var stateMachine = NTASequenceStateMachine() // State machine for managing task states.
     private let executor: any AnyExecutor // Type-erased executor.
+    /// Test-only: when true, next() in .waiting takes the defensive "popFirst() returned nil" path for coverage.
+    internal var _testSimulatePopFirstNil = false
+    internal func _testSetSimulatePopFirstNil(_ value: Bool) { _testSimulatePopFirstNil = value }
     
     /// Initializes a new instance of NeedleTailAsyncConsumer.
     /// - Parameters:
@@ -88,16 +91,15 @@ public actor NeedleTailAsyncConsumer<T: Sendable> {
         } else {
             stateMachine.cancel()
         }
-        switch stateMachine.state {
-        case 0:
+        switch stateMachine.currentState {
+        case .consumed:
             return .consumed
-        case 1:
-            guard let item = deque.popFirst() else {
+        case .waiting:
+            let item: TaskJob<T>? = _testSimulatePopFirstNil ? nil : deque.popFirst()
+            guard let item else {
                 return .consumed
             }
             return .ready(item)
-        default:
-            return .consumed
         }
     }
     
@@ -110,6 +112,10 @@ public actor NeedleTailAsyncConsumer<T: Sendable> {
 }
 
 /// An asynchronous sequence that produces results from a NeedleTailAsyncConsumer.
+///
+/// Iteration yields `.success(value)` for each consumed item. The sequence terminates when the consumer
+/// has no more work (`.consumed`) or when the iteration task is cancelled; the iterator returns `nil`
+/// in both cases and never yields `.consumed` as an element.
 public struct NeedleTailAsyncSequence<ConsumerTypeValue: Sendable>: AsyncSequence, Sendable {
     
     public typealias Element = NTASequenceStateMachine.NTASequenceResult<ConsumerTypeValue>
@@ -149,14 +155,16 @@ extension NeedleTailAsyncSequence {
         }
         
         /// Retrieves the next result from the consumer.
-        /// - Returns: The next result or nil if no more results are available.
+        /// - Returns: The next result (`.success(item)`) or `nil` when the sequence is finished or cancelled.
+        /// - Note: On task cancellation, the iterator terminates by returning `nil`. Any item that was
+        ///   about to be yielded may remain in the consumer's deque; call `gracefulShutdown()` to clear.
         public func next() async throws -> NTASequenceStateMachine.NTASequenceResult<T>? {
             let stateMachine = await consumer.stateMachine
             return await withTaskCancellationHandler {
                 let result = await consumer.next()
                 switch result {
                 case .ready(let sequence):
-                    // Transition to cancel if the deque is empty
+                    // If the deque is now empty, advance the state machine to consumed so the next iteration terminates.
                     if await consumer.deque.isEmpty {
                         _ = await consumer.next()
                     }
@@ -202,20 +210,25 @@ public final class NTASequenceStateMachine: @unchecked Sendable {
     
     private let protectedState = ManagedAtomic<Int>(NTAConsumedState.consumed.rawValue)
     
-    /// The current state of the state machine.
+    /// The current state of the state machine (raw value for atomic access).
     public var state: NTAConsumedState.RawValue {
         get { protectedState.load(ordering: .acquiring) }
         set { protectedState.store(newValue, ordering: .relaxed) }
     }
     
-    /// Marks the state machine as ready.
-    public func ready() {
-        state = 1
+    /// The current state of the state machine as a typed enum.
+    public var currentState: NTAConsumedState {
+        NTAConsumedState(rawValue: state) ?? .consumed
     }
     
-    /// Cancels the state machine.
+    /// Marks the state machine as ready (waiting for consumption).
+    public func ready() {
+        state = NTAConsumedState.waiting.rawValue
+    }
+    
+    /// Cancels the state machine (consumed / idle).
     public func cancel() {
-        state = 0
+        state = NTAConsumedState.consumed.rawValue
     }
 }
 
@@ -239,9 +252,10 @@ public enum Priority: Int, Sendable, Codable {
     case urgent, standard, background, utility
 }
 
+/// Safe to conform when `Deque.Element` is `Sendable` (e.g. `TaskJob<T>` where `T: Sendable`).
+/// Deque is Sendable when its Element is Sendable (e.g. TaskJob<T> where T: Sendable).
 extension Deque: Sendable {}
 
-/// A protocol defining the requirements for a consumer.
 /// A protocol defining the requirements for a consumer.
 public protocol Consumer: Sendable {
     associatedtype T: Sendable
@@ -261,7 +275,7 @@ public final class NTAExecutor: AnyExecutor {
     /// - Parameters:
     ///   - queue: The dispatch queue to execute tasks on.
     ///   - shouldExecuteAsTask: A flag indicating whether to execute as a task (default is true).
-    init(queue: DispatchQueue, shouldExecuteAsTask: Bool = true) {
+    public init(queue: DispatchQueue, shouldExecuteAsTask: Bool = true) {
         self.queue = queue
         self.shouldExecuteAsTask = shouldExecuteAsTask
     }

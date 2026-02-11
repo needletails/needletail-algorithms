@@ -44,5 +44,14 @@ let package = Package(
         .testTarget(
             name: "NeedleTailAsyncSequenceTests",
             dependencies: ["NeedleTailAsyncSequence"]),
+        .testTarget(
+            name: "NTKLoopTests",
+            dependencies: [
+                "NTKLoop",
+                .product(name: "Atomics", package: "swift-atomics")
+            ]),
+        .testTarget(
+            name: "NeedleTailQueueTests",
+            dependencies: ["NeedleTailQueue"]),
     ]
 )
